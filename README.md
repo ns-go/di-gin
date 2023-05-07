@@ -50,6 +50,34 @@ To use the `Container` middleware with Gin, follow these steps:
    ```
 
 Now, the container scope will be available in your Gin handlers via the `ContextKey` constant.
+   ```go
+    ctnVal, _ := c.Get(digin.ContextKey) //c *gin.Context
+    container, _ := ctnVal.(*di.Container)
+   ```
+You can use function `digin.ResolveHandlerFunc` for resolve handler function. Example
+- Declare type of `Service` and `Handlers`
+   ```go
+    type Service1 struct {
+	    container *di.Container `di.inject:"scoped"`
+    }
+
+    type TestHandlers struct {
+	    service *Service1 `di.inject:""`
+    }
+
+    func (h *TestHandlers) TestResponse(c *gin.Context) {
+        //do something
+    }
+   ```
+- Register to `container`
+   ```go
+    di.RegisterScoped[Service1](constainer, false)
+	di.RegisterScoped[TestHandlers](constainer, false)  
+   ```
+- Mapping to `router`
+   ```go
+    router.GET("some-path", digin.ResolveHandlerFunc(func(th *TestHandlers) gin.HandlerFunc { return th.TestResponse }))
+   ```
 
 Make sure to handle any errors that may occur during the creation of the container scope and add appropriate error handling logic in your Gin handlers.
 

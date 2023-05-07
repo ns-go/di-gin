@@ -28,3 +28,17 @@ func Container(container *di.Container) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func ResolveHandlerFunc[THandler any](f func(*THandler) gin.HandlerFunc) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctnVal, _ := ctx.Get(ContextKey)
+		ctn, _ := ctnVal.(*di.Container)
+		h, err := di.Resolve[THandler](ctn)
+		if err != nil {
+			ctx.Errors = append(ctx.Errors, &gin.Error{Err: err, Type: gin.ErrorTypeAny})
+		} else {
+			f(h)(ctx)
+		}
+	}
+
+}

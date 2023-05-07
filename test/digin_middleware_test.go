@@ -14,6 +14,18 @@ type Service1 struct {
 	container *di.Container `di.inject:"scoped"`
 }
 
+type TestHandlers struct {
+	service *Service1 `di.inject:""`
+}
+
+func (h *TestHandlers) TestResponse(c *gin.Context) {
+	if h.service == nil {
+		c.String(200, "failed")
+	} else {
+		c.String(200, "success")
+	}
+}
+
 func TestMiddleware(t *testing.T) {
 	constainer := di.NewContainer()
 
@@ -69,4 +81,24 @@ func TestMiddlewareError(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", "/test", nil)
 	e.ServeHTTP(w, req)
+}
+
+func TestResolveHandlerFunc(t *testing.T) {
+	constainer := di.NewContainer()
+
+	di.RegisterSingleton[Service1](constainer, false)
+	di.RegisterScoped[TestHandlers](constainer, false)
+	r := gin.Default()
+
+	r.Use(digin.Container(constainer))
+
+	r.GET("test", digin.ResolveHandlerFunc(func(th *TestHandlers) gin.HandlerFunc { return th.TestResponse }))
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/test", nil)
+	r.ServeHTTP(w, req)
+
+	if w.Body.String() != "success" {
+		t.Errorf("w.Body.String() == %v; want %v", w.Body.String(), "success")
+	}
 }
