@@ -15,7 +15,7 @@ func Container(container *di.Container) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		scoped, err := container.NewScope()
 		if err != nil {
-			c.AbortWithError(500, err)
+			c.Errors = append(c.Errors, &gin.Error{Err: err, Type: gin.ErrorTypeAny})
 		} else {
 			c.Set(ContextKey, scoped)
 		}

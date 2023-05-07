@@ -50,19 +50,17 @@ func TestMiddlewareError(t *testing.T) {
 	constainer := di.NewContainer()
 
 	di.RegisterSingleton[Service1](constainer, false)
-	r := gin.Default()
+	w := httptest.NewRecorder()
+	_, e := gin.CreateTestContext(w)
 	scoped, _ := constainer.NewScope()
-	r.Use(digin.Container(scoped))
+	e.Use(digin.Container(scoped))
 
-	r.GET("test", func(c *gin.Context) {
-		c.String(200, "success")
+	e.GET("test", func(c *gin.Context) {
+		if len(c.Errors) == 0 {
+			t.Errorf("len(c.Errors) == %v; want %v", len(c.Errors), 1)
+		}
 	})
 
-	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/test", nil)
-	r.ServeHTTP(w, req)
-	status := w.Result().StatusCode
-	if status != 500 {
-		t.Errorf("w.Result().StatusCode == %v; want %v", status, 500)
-	}
+	e.ServeHTTP(w, req)
 }
