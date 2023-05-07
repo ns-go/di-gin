@@ -11,6 +11,7 @@ import (
 )
 
 type Service1 struct {
+	container *di.Container `di.inject:""`
 }
 
 func TestMiddleware(t *testing.T) {
@@ -31,7 +32,12 @@ func TestMiddleware(t *testing.T) {
 		s1, err := di.Resolve[Service1](ctn2)
 		if s1 == nil || err != nil {
 			t.Errorf(`s1, err := di.Resolve[Service1](ctn2) = (%v, %v); want (%v, %v)`, s1, err, Service1{}, nil)
+		} else {
+			if s1.container == nil {
+				t.Errorf(`s1.container = %v; want %v`, s1.container, di.Container{})
+			}
 		}
+
 		if s1 != nil {
 			c.String(200, "success")
 		}

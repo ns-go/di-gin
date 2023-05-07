@@ -17,7 +17,13 @@ func Container(container *di.Container) gin.HandlerFunc {
 		if err != nil {
 			c.Errors = append(c.Errors, &gin.Error{Err: err, Type: gin.ErrorTypeAny})
 		} else {
-			c.Set(ContextKey, scoped)
+			err := di.RegisterFactory(scoped, di.Scoped, func(c di.Container) di.Container { return *scoped }, true)
+			if err != nil {
+				c.Errors = append(c.Errors, &gin.Error{Err: err, Type: gin.ErrorTypeAny})
+			} else {
+				c.Set(ContextKey, scoped)
+			}
+
 		}
 		c.Next()
 	}
