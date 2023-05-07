@@ -74,6 +74,7 @@ You can use function `digin.ResolveHandlerFunc` for resolve handler function. Ex
     di.RegisterScoped[Service1](constainer, false)
 	di.RegisterScoped[TestHandlers](constainer, false)  
    ```
+   
 - Mapping to `router`
    ```go
     router.GET("some-path", digin.ResolveHandlerFunc(func(th *TestHandlers) gin.HandlerFunc { return th.TestResponse }))
