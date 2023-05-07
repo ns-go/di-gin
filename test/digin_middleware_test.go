@@ -11,7 +11,7 @@ import (
 )
 
 type Service1 struct {
-	container *di.Container `di.inject:""`
+	container *di.Container `di.inject:"scoped"`
 }
 
 func TestMiddleware(t *testing.T) {
