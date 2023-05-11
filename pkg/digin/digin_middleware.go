@@ -35,7 +35,7 @@ func ResolveHandlerFunc[THandler any](f func(*THandler) gin.HandlerFunc) gin.Han
 		ctn, _ := ctnVal.(*di.Container)
 		h, err := di.Resolve[THandler](ctn)
 		if err != nil {
-			ctx.Errors = append(ctx.Errors, &gin.Error{Err: err, Type: gin.ErrorTypeAny})
+			panic(err)
 		} else {
 			f(h)(ctx)
 		}

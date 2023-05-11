@@ -80,8 +80,6 @@ You can use function `digin.ResolveHandlerFunc` for resolve handler function. Ex
     router.GET("some-path", digin.ResolveHandlerFunc(func(th *TestHandlers) gin.HandlerFunc { return th.TestResponse }))
    ```
 
-Make sure to handle any errors that may occur during the creation of the container scope and add appropriate error handling logic in your Gin handlers.
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
