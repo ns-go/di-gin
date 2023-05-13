@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.0
-	github.com/ns-go/di v0.3.2
+	github.com/ns-go/di v0.3.3
 )
 
 require (
